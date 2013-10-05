@@ -39,7 +39,8 @@ class FacebookHelper():
         for result in results['friends']['data']:
             
             fb_id = result['id']
-            fbperson = self.ensureFacebookPerson(fb_id)
+            name = result['name']
+            fbperson = self.ensureFacebookPerson(fb_id, name)
             profile.friends.add(fbperson)
             fbpeople.append(fbperson)
                       
@@ -81,7 +82,7 @@ class FacebookHelper():
                                                                                          
         fbperson.interests.add(fbinterest)
 
-    def ensureFacebookPerson(self, fb_id):
+    def ensureFacebookPerson(self, fb_id, name = ""):
 
         try:
             fbperson = Facebook_Person.objects.get(fb_id = fb_id)
@@ -93,6 +94,7 @@ class FacebookHelper():
             
             fbperson = Facebook_Person()
             fbperson.fb_id = fb_id
+            fbperson.first_name = name
             fbperson.save()
         
         return fbperson

@@ -109,7 +109,7 @@ def query(request):
     page_names_upper = [x.upper() for x in page_names]
     page_lookup = {key: val for key, val in zip(page_names_upper, page_names)}
 
-    fbpeople = []
+    response = []
     for term in terms:
 
         # anyPeople = []
@@ -128,10 +128,19 @@ def query(request):
         for p in pages_matched:
             results = profile.friends.filter(interests__name__iexact=p).distinct()
             for r in results:
-                anyPeople.append(r.fb_id)
+                fb_person = Facebook_Person.objects.get(fb_id = r.fb_id)
+                anyPeople.append((r.fb_id, fb_person.first_name))
                     
             if len(anyPeople) > 0:
-                fbpeople.append((p,anyPeople))
+                response.append((p,list(set(anyPeople))))
+
+    # remove duplicates in response
+    already = []
+    for i, item in enumerate(response):
+        if item[0] not in already:
+            already.append(item[0])
+        else:
+            del response[i]
 
     return render_to_response('query.html',locals())
 
