@@ -13,21 +13,21 @@ circle {
 }
 
 .from {
-    fill: red;
-    stroke: red;
-    stroke-width: 1;
+    fill: #FF0D00;
+    stroke: #FF0D00;
+    stroke-width: 2;
 }
 
 .to {
-    fill: blue;
-    stroke: blue;
-    stroke-width: 1;
+    fill: #028E9B;
+    stroke: #028E9B;
+    stroke-width: 2;
 }
 
 .interacted {
-    fill: green;
-    stroke: green;
-    stroke-width: 1;
+    fill: #98ED00;
+    stroke: #98ED00;
+    stroke-width: 2;
 }
 
 path.link {

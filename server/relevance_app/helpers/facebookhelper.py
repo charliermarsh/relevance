@@ -156,7 +156,7 @@ class FacebookHelper():
 
         # get request from FB Graph API
         def getData(URL):
-            query = "SELECT permalink, like_info, comments, actor_id, target_id FROM stream WHERE filter_key in (SELECT filter_key FROM stream_filter WHERE uid=me() AND type='newsfeed') AND strpos(attachment.href, '%s') >= 0 LIMIT 100" % URL
+            query = "SELECT permalink, tagged_ids, like_info, comments, actor_id, target_id FROM stream WHERE filter_key in (SELECT filter_key FROM stream_filter WHERE uid=me() AND type='newsfeed') AND strpos(attachment.href, '%s') >= 0 LIMIT 100" % URL
             oauth_access_token = profile.fb_token
             params = urllib.urlencode(
                 {'q': query, 'access_token': oauth_access_token})
@@ -177,8 +177,12 @@ class FacebookHelper():
 
                 share['from'] = formatId(e['actor_id'])
 
+                targets = []
                 if 'target_id' in e and e['target_id'] is not None:
-                    share['to'] = formatId(e['target_id'])
+                    targets.append(formatId(e['target_id']))
+                if 'tagged_ids' in e and e['tagged_ids'] is not None:
+                    targets += [formatId(i) for i in e['tagged_ids']]
+                share['to'] = targets
 
                 interacted = []
                 if 'comment_list' in e['comments']:
