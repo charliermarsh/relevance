@@ -1,1 +1,35 @@
-{{ fbpeople }}
+{% include "header.html" %}
+
+{% for r in response %}
+
+    <style>
+        .friend-pic {
+            margin-left: -3px;
+        }
+    </style>
+
+    <h3>{{ r.0 }}</h3>
+        {% for person in r.1 %}
+            <a href="javascript:shareArticle({{ person.0 }});"><img title="{{ person.1 }}" class="friend-pic" src="http://graph.facebook.com/{{ person.0 }}/picture" /></a>
+        {% endfor %}
+
+{% endfor %}
+
+<script>
+
+    $( document ).ready(function() {
+        $('.friend-pic').tooltip();
+    });
+
+    function shareArticle(fb_id) {
+
+        url = "https://www.facebook.com/dialog/send?to="+fb_id+"&app_id=339500119519143&link={{ URL }}&redirect_uri=http://www.facebook.com";
+
+        newwindow = window.open(url,'Share Article','height=640,width=1024');
+        if (window.focus) {newwindow.focus()}
+        return false;
+    }
+
+</script>
+
+{% include "footer.html" %}

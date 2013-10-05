@@ -116,7 +116,7 @@ def query(request):
     page_names_upper = [x.upper() for x in page_names]
     page_lookup = {key: val for key, val in zip(page_names_upper, page_names)}
 
-    fbpeople = []
+    response = []
     for term in terms:
 
         # anyPeople = []
@@ -137,22 +137,35 @@ def query(request):
             results = profile.friends.filter(
                 interests__name__iexact=p).distinct()
             for r in results:
-                anyPeople.append(r.fb_id)
+                fb_person = Facebook_Person.objects.get(fb_id = r.fb_id)
+                anyPeople.append((r.fb_id, fb_person.first_name))
 
             if len(anyPeople) > 0:
-                fbpeople.append((p, anyPeople))
+                response.append((p,list(set(anyPeople))))
+
+    # remove duplicates in response
+    already = []
+    for i, item in enumerate(response):
+        if item[0] not in already:
+            already.append(item[0])
+        else:
+            del response[i]
 
     return render_to_response('query.html', locals())
 
+def redirect(request):
+
+    MEDIA_URL = settings.MEDIA_URL
+    URL = request.GET["url"]
+    destination = "http://localhost:8000/query/?url=%s" % URL
+    return render_to_response('redirect.html',locals())
 
 @login_required
 def fbnetwork(request):
     MEDIA_URL = settings.MEDIA_URL
-    URL = "wesley"
+    URL = request.GET["url"]
 
-    #fbhelper = FacebookHelper()
-    #shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
-
-    shares = '{"shares": [{"to": [{"fbid": "826500443", "name": "Chris Murphy"}, {"fbid": "1092510133", "name": "Cara Hampton"}, {"fbid": "713159664", "name": "Danielle Mills"}], "from": {"fbid": "570166179", "name": "Julia Phillips"}, "interacted": [{"fbid": "826500443", "name": "Chris Murphy"}, {"fbid": "570166179", "name": "Julia Phillips"}]}]}'
+    fbhelper = FacebookHelper()
+    shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
 
     return render_to_response('fbnetwork.html', locals())
