@@ -27,21 +27,21 @@ from relevance_app.helpers.alchemyapi import AlchemyAPI
 logging.basicConfig(level=logging.INFO)
 
 def home(request):
-    
+
     MEDIA_URL = settings.MEDIA_URL
     PAGE_TITLE = "Welcome to Relevance"
-    
+
     return render_to_response('home.html',locals())
 
 def connect(request):
-    
+
     MEDIA_URL = settings.MEDIA_URL
     PAGE_TITLE = "Connect Facebook to Snocone"
-    
+
     return render_to_response('connect.html',locals())
 
 def fbchannelfile(request):
-    
+
     MEDIA_URL = settings.MEDIA_URL
     return render_to_response('fbchannelfile.html',locals())
 
@@ -49,12 +49,12 @@ def fbchannelfile(request):
 def ensure_user(request):
 
     MEDIA_URL = settings.MEDIA_URL
-    
+
     # add the user to database if it is not already
     token = request.GET['token']
     fbhelper = FacebookHelper()
     fb_id,email = fbhelper.getUserFromToken(token, request.GET['fb_id'])
-    
+
     # check whether this user is already in the system. If so, update the access token
     usernamefree = False
     try:
@@ -64,16 +64,16 @@ def ensure_user(request):
         profile.save()
     except User.DoesNotExist:
         usernamefree = True
-        
+
     if (usernamefree):
-        
+
         user = User.objects.create_user(fb_id, email, fb_id)
         user.save()
-        
+
         profile = user.get_profile()
         profile.fb_token = token
         profile.save()
-        
+
         user = authenticate(username=fb_id, password=fb_id)
         login(request,user)
         fbhelper.import_friends(user)
@@ -89,12 +89,12 @@ def ensure_user(request):
 def query(request):
 
     MEDIA_URL = settings.MEDIA_URL
-    
+
     user = request.user
     profile = user.get_profile()
 
     URL = request.GET["url"]
-    
+
     lookup = "http://www.diffbot.com/api/article?token=59362348d4e230ba635d20eab5fd80e1&url="+URL
     f = urllib.urlopen(lookup)
     output = json.loads(f.read())
@@ -113,7 +113,7 @@ def query(request):
         results = profile.friends.filter(interests__name__iexact=term).distinct()
         for r in results:
             anyPeople.append(r.fb_id)
-                
+
         if len(anyPeople) > 0:
             fbpeople.append((term,anyPeople))
 
@@ -124,9 +124,11 @@ def query(request):
 @login_required
 def fbnetwork(request):
     MEDIA_URL = settings.MEDIA_URL
-    user = request.user
-    profile = user.get_profile()
+    URL = "theguardian"
 
+    fbhelper = FacebookHelper()
+    shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
 
+    print shares
 
     return render_to_response('fbnetwork.html',locals())
