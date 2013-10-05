@@ -31,17 +31,20 @@ var Graph = {
         for(var i = 0; i < shares.length; i++) {
             var from = {
                 label: shares[i]["from"]["name"],
+                id: shares[i]["from"]["fbid"],
                 type: "from"
             };
 
             var to = {
                 label: shares[i]["to"]["name"],
+                id: shares[i]["to"]["fbid"],
                 type: "to"
             };
 
             var interacted = shares[i]["interacted"].map(function (d) {
                 return {
                     label: d.name,
+                    id: d.fbid,
                     type: "interacted"
                 };
             });
@@ -88,10 +91,9 @@ var Graph = {
             });
         }
 
-        var force = d3.layout.force().size([w, h]).nodes(nodes).links(links).gravity(1).linkDistance(50).charge(-3000).linkStrength(function(x) {
+        var force = d3.layout.force().size([w, h]).nodes(nodes).links(links).gravity(1).linkDistance(100).charge(-3000).linkStrength(function(x) {
             return x.weight * 10
         });
-
 
         force.start();
 
@@ -101,15 +103,36 @@ var Graph = {
         var link = vis.selectAll("line.link").data(links).enter().append("svg:line").attr("class", "link").style("stroke", "#CCC").style('marker-end', 'url(#end-arrow)');
 
         var node = vis.selectAll("g.node").data(force.nodes()).enter().append("svg:g").attr("class", "node");
-        node.append("svg:circle").attr("class", function (d) { return d.type; }).attr("r", function (d) {
-                return (d.type == "from")? 20 : (d.type == "to")? 12 : 8;
-            });
+
+        var profPic = function(d) {
+            return "http://graph.facebook.com/" + d.id + "/picture?type=square";
+        }
+
+        var getSize = function(d) {
+            return (d.type == "from")? 60 : (d.type == "to")? 40 : 20;
+        }
+
+        vis.append("clipPath").attr("id", "clipLarge").append("circle").attr("r", "30");
+        vis.append("clipPath").attr("id", "clipMedium").append("circle").attr("r", "20");
+        vis.append("clipPath").attr("id", "clipSmall").append("circle").attr("r", "10");
+
+        var getClipPath = function(d) {
+            return (d.type == "from")? "clipLarge" : (d.type == "to")? "clipMedium" : "clipSmall";
+        }
+
+        node.append("svg:circle").attr("class", function (d) { return d.type; }).attr("r", getSize);
+        node.append("image").attr("xlink:href", function (d) { return profPic(d); })
+            .attr("height", getSize)
+            .attr("width", getSize)
+            .attr("x", function(d) { return -1*getSize(d)/2 })
+            .attr("clip-path", function(d) { return "url(#" + getClipPath(d) + ")"; })
+            .attr("y", function(d) { return -1*getSize(d)/2 });
         node.call(force.drag);
 
         var anchorLink = vis.selectAll("line.anchorLink").data(labelAnchorLinks)
 
         var anchorNode = vis.selectAll("g.anchorNode").data(force2.nodes()).enter().append("svg:g").attr("class", "anchorNode");
-        anchorNode.append("svg:circle").attr("r", 0).style("fill", "#FFF");
+        anchorNode.append("g").append("svg:circle").attr("r", 0).style("fill", "#FFF");
             anchorNode.append("svg:text").text(function(d, i) {
             return i % 2 == 0 ? "" : d.node.label
         }).style("fill", "#555").style("font-family", "Arial").style("font-size", 12);
