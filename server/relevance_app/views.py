@@ -144,14 +144,19 @@ def query(request):
 
     return render_to_response('query.html',locals())
 
+def redirect(request):
+
+    MEDIA_URL = settings.MEDIA_URL
+    URL = request.GET["url"]
+    destination = "http://localhost:8000/query/?url=%s" % URL
+    return render_to_response('redirect.html',locals())
+
 @login_required
 def fbnetwork(request):
     MEDIA_URL = settings.MEDIA_URL
-    URL = "theguardian"
+    URL = request.GET["url"]
 
     fbhelper = FacebookHelper()
     shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
-
-    print shares
 
     return render_to_response('fbnetwork.html',locals())

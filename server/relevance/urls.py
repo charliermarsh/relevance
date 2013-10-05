@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     # INTRO VIEWS
     ('^$', home),
     ('^connect/$', connect),
+    ('^redirect/$', redirect),
     ('^fbchannelfile/$', fbchannelfile),
                        
     # APPLICATION VIEWS

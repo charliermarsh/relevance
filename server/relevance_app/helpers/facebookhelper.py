@@ -191,7 +191,10 @@ class FacebookHelper():
 
                 return share
 
-            parsed_data = {'shares': [parseEntry(e) for e in data['data']]}
-            return parsed_data
+            try:
+                parsed_data = {'shares': [parseEntry(e) for e in data['data']]}
+                return parsed_data
+            except:
+                return None
 
         return parseData(getData(URL))
