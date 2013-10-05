@@ -95,10 +95,10 @@ def query(request):
 
     URL = request.GET["url"]
     
-    lookup = "http://www.diffbot.com/api/article?token=59362348d4e230ba635d20eab5fd80e1&url="+URL
-    f = urllib.urlopen(lookup)
-    output = json.loads(f.read())
-    text = output['text'].replace("\n"," ")
+    # lookup = "http://www.diffbot.com/api/article?token=59362348d4e230ba635d20eab5fd80e1&url="+URL
+    # f = urllib.urlopen(lookup)
+    # output = json.loads(f.read())
+    # text = output['text'].replace("\n"," ")
 
     alchemyapi = AlchemyAPI()
     result = alchemyapi.entities('url',URL)
