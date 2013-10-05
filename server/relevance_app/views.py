@@ -102,9 +102,10 @@ def query(request):
 
     alchemyapi = AlchemyAPI()
     result = alchemyapi.entities('url',URL)
-    terms = [x["text"] for x in result["entities"]]
 
-    
+    terms = [x["text"] for x in result["entities"]]
+    terms_upper = [x.upper() for x in terms]
+    terms_lookup = {key: val for key, val in zip(terms_upper, terms)}
 
     fbpeople = []
     for term in terms:
@@ -116,110 +117,16 @@ def query(request):
         if len(anyPeople) > 0:
             fbpeople.append((term,anyPeople))
 
+
+
     return render_to_response('query.html',locals())
 
 @login_required
-def friend_json(request, fb_id):
-    
-    user = request.user
-    
-    fbhelper = FacebookHelper()
-    likehelper = LikeHelper()
-    embedlyhelper = EmbedlyHelper()
-    
-    # Get this fb_person's likes from the database
-    likes = []
-    fbperson = Facebook_Person.objects.get(fb_id = fb_id)
-    interests = fbperson.interests.filter()
-    for interest in interests:
-        likes.append((interest.name,interest.category))
-    
-    # fall back to FB API is friends not yet imported
-    if len(interests) == 0:
-        try:
-            likes = fbhelper.getFriendLikes(user, fb_id)
-        except:
-            message = "FALSE"
-            return render_to_response('intro/message.html',locals())
-    
-    dict = likehelper.createLikeDict(likes)
-    articles = likehelper.likefilter(dict)
-    
-    # get the images for these articles
-    for article in articles:
-        
-        try:
-            results = embedlyhelper.get_terms_and_image(article.url)
-            
-            terms = results[0]
-            imageData = results[1]
-            summary = results[2]
-            
-            # put summary in
-            article.summary = summary
-            
-            # put image data in
-            article.image = imageData[0]
-            article.imageWidth = imageData[1]
-            article.imageHeight = imageData[2]
-        
-        except ValueError:
-            continue
-    
-    
-    
-    return render_to_response('json/friend.html',locals())
-
-@login_required
-def newsfeed_json(request):
-    
+def fbnetwork(request):
+    MEDIA_URL = settings.MEDIA_URL
     user = request.user
     profile = user.get_profile()
-    newsfetcher = NewsFetcher()
-    diffbothelper = DiffbotHelper()
-    embedlyhelper = EmbedlyHelper()
-    
-    if not profile.friends_imported:
-        message = "FALSE"
-        return render_to_response('intro/message.html',locals())
-    
-    items = []
-    articles = newsfetcher.getHeadlinesAsArticles()
-    for article in articles:
-        
-        try:
-            item = Item()
-            item.article = article
-            
-            results = embedlyhelper.get_terms_and_image(article.url)
 
-            terms = results[0]
-            imageData = results[1]
-            summary = results[2]
-                
-            fbpeople = []
-            for term in terms:
 
-                anyPeople = []
-                results = profile.friends.filter(interests__name__iexact=term).distinct()
-                for r in results:
-                    anyPeople.append(r.fb_id)
-                        
-                if len(anyPeople) > 0:
-                    fbpeople.append((term,anyPeople))
-                        
-            item.fbpeople = fbpeople
-        
-            # put summary in
-            item.article.summary = summary
-            
-            # put image data in
-            item.article.image = imageData[0]
-            item.article.imageWidth = imageData[1]
-            item.article.imageHeight = imageData[2]
-        
-            items.append(item)
-        except ValueError:
-            continue
 
-    return render_to_response('json/newsfeed.html',locals())
+    return render_to_response('fbnetwork.html',locals())

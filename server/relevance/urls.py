@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 
 from relevance_app.views import *
-from relevance_app.cron_views import *
 
 
 # Uncomment the next two lines to enable the admin:
@@ -31,16 +30,6 @@ urlpatterns = patterns('',
                        
     # APPLICATION VIEWS
     ('^ensure_user/$', ensure_user),
-                       
     ('^query/$', query),
-
-
-    # JSON VIEWS
-    ('^json/friend/(?P<fb_id>\d+)/$', friend_json),
-    ('^json/newsfeed/$', newsfeed_json),
-                       
-    # CRON VIEWS
-    ('^cron/unimported/', unimported), # JSON list of users whose friends' interests have not be imported yet
-    ('^cron/importfriends/(?P<fb_id>\d+)/$', importfriends), # imports friends for everyone who hasn't been yet
-    ('^cron/headline/', headline)
+    ('^fbnetwork/$', fbnetwork),
 )
