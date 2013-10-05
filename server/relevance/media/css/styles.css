@@ -5,3 +5,34 @@ body {
 .navbar {
     margin-bottom: 30px;
 }
+
+/* Graph */
+circle {
+    fill-opacity:0.6;
+    stroke-opacity:1
+}
+
+.from {
+    fill: red;
+    stroke: red;
+    stroke-width: 1;
+}
+
+.to {
+    fill: blue;
+    stroke: blue;
+    stroke-width: 1;
+}
+
+.interacted {
+    fill: green;
+    stroke: green;
+    stroke-width: 1;
+}
+
+path.link {
+  fill: none;
+  stroke: #000;
+  stroke-width: 4px;
+  cursor: default;
+}

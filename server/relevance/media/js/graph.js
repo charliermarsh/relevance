@@ -1,5 +1,6 @@
 var Graph = {
     layout : function(data) {
+        data = jQuery.parseJSON(data);
         var shares = data["shares"];
 
         var w = 960, h = 500;
@@ -35,12 +36,24 @@ var Graph = {
                 type: "from"
             };
 
-            var to = {
-                label: shares[i]["to"]["name"],
-                id: shares[i]["to"]["fbid"],
-                type: "to"
-            };
+            // 'to' is not always present
+            var target_present = ('to' in shares[i]);
+            if (target_present) {
+                var to = {
+                    label: shares[i]["to"]["name"],
+                    id: shares[i]["to"]["fbid"],
+                    type: "to"
+                };
+                // link from 'from' to 'to'
+                links.push({
+                    source: count,
+                    target: count + 1,
+                    weight: 1
+                });
+            }
 
+            // handle commentors / likers
+            var offset = (target_present)? 1 : 0;
             var interacted = shares[i]["interacted"].map(function (d) {
                 return {
                     label: d.name,
@@ -48,8 +61,16 @@ var Graph = {
                     type: "interacted"
                 };
             });
+            // link from 'from' to each 'interacted'
+            for (var j = 0; j < interacted.length; j++) {
+                links.push({
+                    source: count,
+                    target: count + offset + (j + 1),
+                    weight: 0.5
+                });
+            }
 
-            var share_nodes = [from, to].concat(interacted);
+            var share_nodes = ((target_present)? [from, to] : [from]).concat(interacted);
 
             // add label anchors
             for (var j = 0; j < share_nodes.length; j++) {
@@ -60,22 +81,6 @@ var Graph = {
                 });
                 labelAnchors.push({
                     node: node
-                });
-            }
-
-            // link from 'from' to 'to'
-            links.push({
-                source: count,
-                target: count + 1,
-                weight: 1
-            });
-
-            // link from 'from' to each 'interacted'
-            for (var j = 0; j < interacted.length; j++) {
-                links.push({
-                    source: count,
-                    target: count + 1 + (j + 1),
-                    weight: 0.5
                 });
             }
 
