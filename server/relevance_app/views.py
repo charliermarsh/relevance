@@ -95,29 +95,43 @@ def query(request):
 
     URL = request.GET["url"]
 
-    lookup = "http://www.diffbot.com/api/article?token=59362348d4e230ba635d20eab5fd80e1&url="+URL
-    f = urllib.urlopen(lookup)
-    output = json.loads(f.read())
-    text = output['text'].replace("\n"," ")
+    # lookup = "http://www.diffbot.com/api/article?token=59362348d4e230ba635d20eab5fd80e1&url="+URL
+    # f = urllib.urlopen(lookup)
+    # output = json.loads(f.read())
+    # text = output['text'].replace("\n"," ")
 
     alchemyapi = AlchemyAPI()
     result = alchemyapi.entities('url',URL)
+    terms = [x["text"].upper() for x in result["entities"]]
 
-    terms = [x["text"] for x in result["entities"]]
-    terms_upper = [x.upper() for x in terms]
-    terms_lookup = {key: val for key, val in zip(terms_upper, terms)}
+    pages = Facebook_Interest.objects.filter()
+    page_names = [x.name for x in pages]
+    page_names_upper = [x.upper() for x in page_names]
+    page_lookup = {key: val for key, val in zip(page_names_upper, page_names)}
 
     fbpeople = []
     for term in terms:
+
+        # anyPeople = []
+        # results = profile.friends.filter(interests__name__iexact=term).distinct()
+        # for r in results:
+        #     anyPeople.append(r.fb_id)
+
+        # if len(anyPeople) > 0:
+        #     fbpeople.append((term,anyPeople))
+
         anyPeople = []
-        results = profile.friends.filter(interests__name__iexact=term).distinct()
-        for r in results:
-            anyPeople.append(r.fb_id)
+        matches = difflib.get_close_matches(term, page_names_upper, cutoff = 0.9)
+        if not matches:
+            continue
+        pages_matched = [page_lookup[m] for m in matches]
+        for p in pages_matched:
+            results = profile.friends.filter(interests__name__iexact=p).distinct()
+            for r in results:
+                anyPeople.append(r.fb_id)
 
-        if len(anyPeople) > 0:
-            fbpeople.append((term,anyPeople))
-
-
+            if len(anyPeople) > 0:
+                fbpeople.append((p,anyPeople))
 
     return render_to_response('query.html',locals())
 
