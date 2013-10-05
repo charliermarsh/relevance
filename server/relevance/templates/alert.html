@@ -1,0 +1,78 @@
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta property="og:title" content="Snocone Alert" />
+        <title>Snocone Alert</title>
+    </head>
+    <body link="#FF0000" vlink="#FF0000" alink="#FF0000" style="margin: 0; padding: 0; background: #EFEFEF; font-family: 'Open Sans', Helvetica, sans-serif; font-size: 14px; line-height: 18px; color: #5f5358; border-top: 22px solid #CCC; border-bottom: 32px solid #CCC; text-align: center; -webkit-text-size-adjust: none">
+        <br />
+        <br />
+        <br />
+        <div id="wrapper" style="width: 640px; margin: 0 auto; text-align: left; max-width: 640px">
+            
+            <table cellpadding="40" cellspacing="0" width="640" style="margin: 0; border: 1px solid #e9e9e9">
+                <tr>
+                    <td style="width: 350px; background: #ffffff;" valign="top">
+                        <table cellpadding="0" cellspacing="0" width="569" border="0" style="margin: 0;">
+                            <tr>
+                                <td style="padding: 20px 0 0 0;">
+                                    <center>
+                                        <img src="http://oi44.tinypic.com/nd4fva.jpg" alt="Panther" width="29" height="43"/>
+                                        <h2 style="line-height: 1.6em; font-weight:300; font-family: 'Open Sans', Helvetica, sans-serif;"><a style="color:#888; text-decoration:none;" href="{{ item.article.url }}">{% autoescape off %}{{ item.article.title }}{% endautoescape %}</a></h2>
+                                    </center>
+                                    <table style="padding-top:10px;" cellpadding="10px" cellspacing="0" width="569" border="0">
+                                        <tr>
+                                            <td valign="top">
+                                                <a target="_blank" href="{{ item.article.url }}"><img width="200px" src="{{ item.article.image }}"></img></a>
+                                            </td>
+                                            <td style="text-align:justify; font-weight:300; font-size:13px; font-family: 'Open Sans', Helvetica, sans-serif;">
+                                                {% autoescape off %}{{ item.article.summary }}{% endautoescape %}
+                                                <br /><br />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan=2 style="border-top: 1px solid #EEE; font-weight:300; font-size:13px; font-family: 'Open Sans', Helvetica, sans-serif;">
+                                                <br />
+                                                {% for term in item.fbpeople %}
+                                                        <h3>{{ term.0 }}</h3>
+                                                        {% for fb_id in term.1 %}
+                                                            <a href="http://www.facebook.com/{{ fb_id }}"><img src="http://graph.facebook.com/{{ fb_id }}/picture" /></a>
+                                                            {% if forloop.revcounter != 1 %}
+                                                            ,
+                                                            {% endif %}
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <table border="0" cellpadding="0" cellspacing="0" width="640" id="templateFooter">
+                <tr>
+                    <td valign="top" class="footerContent">
+                        <!-- // Begin Module: Standard Footer \\ -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td valign="top" width="100%" align="center">
+                                    <br />
+                                    <div style="font-size: 12px">
+                                        Copyright &copy; 2013 Snocone
+                                    </div>
+                                    <br />
+                                </td>
+                            </tr>
+                            
+                        </table>
+                        <!-- // End Module: Standard Footer \\ -->
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

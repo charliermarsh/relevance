@@ -1,0 +1,15 @@
+
+{
+    "users": [
+
+        {% for user in users %}
+
+            {{ user.username }}
+
+            {% if forloop.revcounter != 1 %}
+            ,
+            {% endif %}
+
+        {% endfor %}
+    ]
+}
