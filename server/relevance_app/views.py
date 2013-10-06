@@ -121,7 +121,7 @@ def query(request):
         #     fbpeople.append((term,anyPeople))
 
         anyPeople = []
-        matches = difflib.get_close_matches(term, page_names_upper, cutoff = 0.9)
+        matches = difflib.get_close_matches(term, page_names_upper, cutoff = 0.88)
         if not matches:
             continue
         pages_matched = [page_lookup[m] for m in matches]

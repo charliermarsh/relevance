@@ -1,7 +1,9 @@
 <html>
 <head>
+    <link href="bootstrap.css" rel="stylesheet">
      <style type="text/css">
          body {
+            margin-top:12px;
             width: 500px;
             height: 500px;
             overflow: hidden;
@@ -9,8 +11,14 @@
      </style>
   </head>
 <body>
+    <center>
+        <div class="btn-group btn-group-sm">
+          <button id="keywordLink" type="button" class="btn btn-info">Keyword</button>
+          <button id="networkLink" type="button" class="btn btn-info">Network</button>
+        </div>
+    </center>
+    <iframe style="height:550px; width:100%;" frameBorder="0" id="mainFrame"></iframe>
+    <iframe style="height:550px; width:100%;" frameBorder="0" id="networkFrame"></iframe>
     <script type="text/javascript" src="popup.js"></script>
-    <iframe style="height:100%; width:100%" frameBorder="0" id="mainFrame"></iframe>
-    <iframe style="height:100%; width:100%" frameBorder="0" id="networkFrame" style="display:none;"></iframe>
 </body>
 </html>
