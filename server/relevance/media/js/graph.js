@@ -1,11 +1,14 @@
 var Graph = {
     layout : function(data, URL) {
-        if (!data) {
-            document.getElementById("#network-loader").innerHTML = "No network found.";
+        data = jQuery.parseJSON(data);
+
+        if (data == null) {
+            document.getElementById("network-loader").innerHTML = "No network found.";
             return;
+        } else {
+            document.getElementById("network-loader").style.display = "None";
         }
 
-        data = jQuery.parseJSON(data);
         var shares = data["shares"];
 
         var w = 960, h = 500;
