@@ -4,9 +4,9 @@ var updateIcon = function(url) {
     xmlhttp.send();
 
     if (xmlhttp.responseText == "True") {
-        chrome.browserAction.setIcon({path: 'glow.png'});
+        chrome.browserAction.setIcon({path: '19x19-glow.png'});
     } else {
-        chrome.browserAction.setIcon({path: 'icon.png'})
+        chrome.browserAction.setIcon({path: '19x19.png'})
     }
 }
 

@@ -21,22 +21,21 @@
 
 <script type="text/javascript">
     window.location = "{{ destination }}";
-  // window.onload = function() {
-        var items = $("#procedure .instruction");
-        console.log(items.length);
 
-        var setHighlight = function(idx, delay) {
-            items.each(function(i) {
-                $(this).animate({
-                    opacity: (i == idx)? 1 : 0.25
-                }, delay);
-            });
-        };
+    var items = $("#procedure .instruction");
+    console.log(items.length);
 
-        setHighlight(0, 0);
-        setTimeout(function() { setHighlight(1, 500); }, 1000);
-        setTimeout(function() { setHighlight(2, 500); }, 2000);
-  //  };
+    var setHighlight = function(idx, delay) {
+        items.each(function(i) {
+            $(this).animate({
+                opacity: (i == idx)? 1 : 0.25
+            }, delay);
+        });
+    };
+
+    setHighlight(0, 0);
+    setTimeout(function() { setHighlight(1, 500); }, 1000);
+    setTimeout(function() { setHighlight(2, 500); }, 2000);
 </script>
 
 {% include "footer.html" %}

@@ -105,7 +105,7 @@ class FacebookHelper():
             url = "https://graph.facebook.com/fql?" + params
             data = urllib.urlopen(url)
             response = json.load(data)
-            
+
             if "data" not in response.keys():
                 continue
 
@@ -117,7 +117,7 @@ class FacebookHelper():
                 fblink.owner = [Facebook_Person.objects.get(fb_id = item["owner"])]
                 fblink.save()
 
-            
+
             fbperson.links_imported = True
             fbperson.save()
 
@@ -245,9 +245,12 @@ class FacebookHelper():
 
         return parseData(getData(URL))
 
-    def getArticleInteractions(self, user, URL):
+    def articleIsRelevant(self, URL):
+        matches = Facebook_Link.objects.filter(url=URL)
+        return bool(len(matches))
 
-        matches = Facebook_Link.objects.filter(url = URL)
+    def getArticleInteractions(self, user, URL):
+        matches = Facebook_Link.objects.filter(url=URL)
         if not len(matches):
             return None
         fblink = matches[0]
@@ -256,7 +259,7 @@ class FacebookHelper():
         oauth_access_token = profile.fb_token
 
         graph = GraphAPI(oauth_access_token)
-        
+
         data = graph.request(fblink.fb_id)
         if not data:
             return None
@@ -266,7 +269,7 @@ class FacebookHelper():
 
         if "likes" in data.keys():
             liked = [(x["id"],x["name"]) for x in data["likes"]["data"]]
-        
+
         if "comments" in data.keys():
             commented = [(x["from"]["id"], x["from"]["name"]) for x in data["comments"]["data"]]
             print "HELLO!"
