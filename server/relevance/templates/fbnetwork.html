@@ -4,7 +4,7 @@
         <h1>FBNETWORK GOES HERE!</h1>
         <hr/>
         <!-- Shu: How do I get the JSON object from 'locals()'? -->
-        <script type="text/javascript" charset="utf-8">Graph.layout('{% autoescape off %}{{ shares }}{% endautoescape %}');</script>
+        <script type="text/javascript" charset="utf-8">Graph.layout('{% autoescape off %}{{ shares }}{% endautoescape %}', '{{ URL }}');</script>
     </div>
 
 {% include "footer.html" %}

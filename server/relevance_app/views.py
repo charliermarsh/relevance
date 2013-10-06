@@ -166,6 +166,7 @@ def fbnetwork(request):
     URL = request.GET["url"]
 
     fbhelper = FacebookHelper()
-    shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
+    #shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
+    shares = shares = '{"shares": [{"to": [{"fbid": "826500443", "name": "Chris Murphy"}, {"fbid": "1092510133", "name": "Cara Hampton"}, {"fbid": "713159664", "name": "Danielle Mills"}], "from": {"fbid": "570166179", "name": "Julia Phillips"}, "interacted": [{"fbid": "826500443", "name": "Chris Murphy"}, {"fbid": "570166179", "name": "Julia Phillips"}]}]}'
 
     return render_to_response('fbnetwork.html', locals())

@@ -1,5 +1,5 @@
 var Graph = {
-    layout : function(data) {
+    layout : function(data, URL) {
         data = jQuery.parseJSON(data);
         var shares = data["shares"];
 
@@ -127,7 +127,10 @@ var Graph = {
         }
 
         node.on("click", function (d) {
-
+            url = "https://www.facebook.com/dialog/send?to="+d.id+"&app_id=339500119519143&link=" + URL + "&redirect_uri=http://www.facebook.com";
+            newwindow = window.open(url,'Share Article','height=640,width=1024');
+            if (window.focus) {newwindow.focus()}
+            return false;
         });
         node.append("svg:circle").attr("class", function (d) { return d.type; }).attr("r", getSize);
         node.append("image").attr("xlink:href", function (d) { return profPic(d); })
