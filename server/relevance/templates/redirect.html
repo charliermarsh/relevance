@@ -20,7 +20,9 @@
 </center>
 
 <script type="text/javascript">
-    window.location = "{{ destination }}";
+
+    console.log("Animating");
+
     window.onload = function() {
         var items = $("#procedure .instruction");
         console.log(items.length);
@@ -37,6 +39,17 @@
         setTimeout(function() { setHighlight(1, 500); }, 1000);
         setTimeout(function() { setHighlight(2, 500); }, 2000);
     };
+
+    function getOut() {
+
+        console.log("Setting location");
+        window.location = "{{ destination }}";
+    }
+
+    setTimeout(getOut(), 10000)
+
+
+    
 </script>
 
 {% include "footer.html" %}
