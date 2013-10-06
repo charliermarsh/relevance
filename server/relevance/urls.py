@@ -17,20 +17,21 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    
-                       
+
+
     # STATIC FILES
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/media/img/favicon.ico'}),
-                       
+
     # INTRO VIEWS
     ('^$', home),
     ('^connect/$', connect),
     ('^redirect/$', redirect),
     ('^fbchannelfile/$', fbchannelfile),
-                       
+
     # APPLICATION VIEWS
     ('^ensure_user/$', ensure_user),
     ('^query/$', query),
+    ('^fbexists/$', fbexists),
     ('^fbnetwork/$', fbnetwork),
 )
