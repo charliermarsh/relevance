@@ -1,5 +1,10 @@
 var Graph = {
     layout : function(data, URL) {
+        if (!data) {
+            document.getElementById("#network-loader").innerHTML = "No network found.";
+            return;
+        }
+
         data = jQuery.parseJSON(data);
         var shares = data["shares"];
 
