@@ -21,7 +21,8 @@
 
 <script type="text/javascript">
     window.location = "{{ destination }}";
-    window.onload = function() {
+  // window.onload = function() {
+        console.log("Loading!");
         var items = $("#procedure .instruction");
         console.log(items.length);
 
@@ -36,7 +37,7 @@
         setHighlight(0, 0);
         setTimeout(function() { setHighlight(1, 500); }, 1000);
         setTimeout(function() { setHighlight(2, 500); }, 2000);
-    };
+  //  };
 </script>
 
 {% include "footer.html" %}
