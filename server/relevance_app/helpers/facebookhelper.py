@@ -269,9 +269,13 @@ class FacebookHelper():
         
         if "comments" in data.keys():
             commented = [(x["from"]["id"], x["from"]["name"]) for x in data["comments"]["data"]]
+            print "HELLO!"
+            print commented
 
         interacted = list(set(liked + commented))
 
         response = {'shares': [{"to": [], "from": {'fbid': str(data["from"]["id"]), 'name': data["from"]["name"]}, "interacted": [{'fbid': str(fb_id), 'name': name} for fb_id, name in interacted]}]}
+
+        print response
 
         return response

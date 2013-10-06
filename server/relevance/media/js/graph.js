@@ -6,12 +6,12 @@ var Graph = {
             document.getElementById("network-loader").innerHTML = "No network found.";
             return;
         } else {
-            document.getElementById("network-loader").style.display = "None";
+            document.getElementById("network-loader").style.display = "none";
         }
 
         var shares = data["shares"];
 
-        var w = 960, h = 500;
+        var w = 450, h = 400;
 
         var labelDistance = 0;
 
