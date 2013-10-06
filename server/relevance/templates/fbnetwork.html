@@ -1,14 +1,6 @@
 {% include "header.html" %}
 
-    <div class="page-header">
-        <center><div id="network-loader"><img src="{{ MEDIA_URL }}img/loader.gif" /></div></center>
-        <hr/>
-<<<<<<< HEAD
-        <script type="text/javascript" charset="utf-8">Graph.layout('{% autoescape off %}{{ shares }}{% endautoescape %}');</script>
-=======
-        <!-- Shu: How do I get the JSON object from 'locals()'? -->
-        <script type="text/javascript" charset="utf-8">Graph.layout('{% autoescape off %}{{ shares }}{% endautoescape %}', '{{ URL }}');</script>
->>>>>>> 5b55280f387fefdcb0ee56a4bf48a5969b8d0f2d
-    </div>
+    <center><div id="network-loader"><img src="{{ MEDIA_URL }}img/loader.gif" /></div></center>
+    <script type="text/javascript" charset="utf-8">Graph.layout('{% autoescape off %}{{ shares }}{% endautoescape %}', '{{ URL }}');</script>
 
 {% include "footer.html" %}
