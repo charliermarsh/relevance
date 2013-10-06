@@ -20,5 +20,5 @@ document.getElementById("keywordLink").onclick = function showKeywordView(){
 
     document.getElementById("networkFrame").style.display = "none";
     document.getElementById("mainFrame").style.display = "block";
-    
+
 }

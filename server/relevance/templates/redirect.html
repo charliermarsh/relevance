@@ -1,9 +1,42 @@
 {% include "header.html" %}
 
-<center><img src="{{ MEDIA_URL }}img/loader.gif" /></center>
+<style type="text/css">
+    .listItem {
+        padding:20px;
+        font-size:20px;
+    }
+</style>
 
-<script>
+<center>
+    <img src="{{ MEDIA_URL }}img/loader.gif" />
+    <div style="height:30px"></div>
+    <div id="procedure">
+        <div class="listItem instruction">1. Extracting key terms...</div>
+        <div class="listItem">•</div>
+        <div class="listItem instruction">2. Gathering contact information...</div>
+        <div class="listItem">•</div>
+        <div class="listItem instruction">3. Cross-referencing...</div>
+    </div>
+</center>
+
+<script type="text/javascript">
     window.location = "{{ destination }}";
+    window.onload = function() {
+        var items = $("#procedure .instruction");
+        console.log(items.length);
+
+        var setHighlight = function(idx, delay) {
+            items.each(function(i) {
+                $(this).animate({
+                    opacity: (i == idx)? 1 : 0.25
+                }, delay);
+            });
+        };
+
+        setHighlight(0, 0);
+        setTimeout(function() { setHighlight(1, 500); }, 1000);
+        setTimeout(function() { setHighlight(2, 500); }, 2000);
+    };
 </script>
 
 {% include "footer.html" %}
