@@ -1,0 +1,2 @@
+export DJANGO_SETTINGS_MODULE=relevance.settings
+python importlinks_helper.py $1

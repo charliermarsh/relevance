@@ -25,6 +25,13 @@ class Facebook_Person(models.Model):
     interests = models.ManyToManyField(Facebook_Interest,null=True)
 
     likes_imported = models.BooleanField(default=False)
+    links_imported = models.BooleanField(default=False)
+
+class Facebook_Link(models.Model):
+    
+    fb_id = models.CharField(max_length=400)
+    url = models.CharField(max_length=800,null=True)
+    owner = models.ManyToManyField(Facebook_Person)
 
 class UserProfile(models.Model):
     

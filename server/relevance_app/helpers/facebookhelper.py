@@ -86,6 +86,48 @@ class FacebookHelper():
 
         return true
 
+    def importFriendsLinks(self, user):
+
+        profile = user.get_profile()
+
+        oauth_access_token = profile.fb_token
+        graph = GraphAPI(oauth_access_token)
+
+        fbpeople = profile.friends.filter(links_imported = False)
+        total_queued = len(fbpeople)
+
+        for index, fbperson in enumerate(fbpeople):
+
+            query = "SELECT link_id, owner, url FROM link WHERE owner = %s LIMIT 10" % fbperson.fb_id
+            oauth_access_token = profile.fb_token
+            params = urllib.urlencode(
+                {'q': query, 'access_token': oauth_access_token})
+            url = "https://graph.facebook.com/fql?" + params
+            data = urllib.urlopen(url)
+            response = json.load(data)
+            
+            if "data" not in response.keys():
+                continue
+
+            for item in response['data']:
+                fblink = Facebook_Link()
+                fblink.fb_id = item["link_id"]
+                fblink.url = item["url"]
+                fblink.save()
+                fblink.owner = [Facebook_Person.objects.get(fb_id = item["owner"])]
+                fblink.save()
+
+            
+            fbperson.links_imported = True
+            fbperson.save()
+
+            print "%s of %s complete" % (index, total_queued)
+
+        profile.friends_imported = True
+        profile.save()
+
+        return true
+
     def ensureFacebookPersonHasInterest(self, fbperson, fbinterest):
 
         fbperson.interests.add(fbinterest)
@@ -153,7 +195,7 @@ class FacebookHelper():
 
         return results['name']
 
-    def getArticleInteractions(self, user, URL):
+    def getArticleInteractions_OLD(self, user, URL):
         profile = user.get_profile()
 
         # get request from FB Graph API
@@ -202,3 +244,34 @@ class FacebookHelper():
                 return None
 
         return parseData(getData(URL))
+
+    def getArticleInteractions(self, user, URL):
+
+        matches = Facebook_Link.objects.filter(url = URL)
+        if not len(matches):
+            return None
+        fblink = matches[0]
+
+        profile = user.get_profile()
+        oauth_access_token = profile.fb_token
+
+        graph = GraphAPI(oauth_access_token)
+        
+        data = graph.request(fblink.fb_id)
+        if not data:
+            return None
+
+        liked = []
+        commented = []
+
+        if "likes" in data.keys():
+            liked = [(x["id"],x["name"]) for x in data["likes"]["data"]]
+        
+        if "comments" in data.keys():
+            commented = [(x["from"]["id"], x["from"]["name"]) for x in data["comments"]["data"]]
+
+        interacted = list(set(liked + commented))
+
+        response = {'shares': [{"to": [], "from": {'fbid': str(data["from"]["id"]), 'name': data["from"]["name"]}, "interacted": [{'fbid': str(fb_id), 'name': name} for fb_id, name in interacted]}]}
+
+        return response
