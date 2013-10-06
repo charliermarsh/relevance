@@ -26,26 +26,31 @@ from relevance_app.helpers.alchemyapi import AlchemyAPI
 
 logging.basicConfig(level=logging.INFO)
 
+
 def home(request):
 
     MEDIA_URL = settings.MEDIA_URL
     PAGE_TITLE = "Welcome to Relevance"
 
-    return render_to_response('home.html',locals())
+    return render_to_response('home.html', locals())
+
 
 def connect(request):
 
     MEDIA_URL = settings.MEDIA_URL
     PAGE_TITLE = "Connect Facebook to Snocone"
 
-    return render_to_response('connect.html',locals())
+    return render_to_response('connect.html', locals())
+
 
 def fbchannelfile(request):
 
     MEDIA_URL = settings.MEDIA_URL
-    return render_to_response('fbchannelfile.html',locals())
+    return render_to_response('fbchannelfile.html', locals())
 
 # logs the user in, and creates the account if haven't already
+
+
 def ensure_user(request):
 
     MEDIA_URL = settings.MEDIA_URL
@@ -53,9 +58,10 @@ def ensure_user(request):
     # add the user to database if it is not already
     token = request.GET['token']
     fbhelper = FacebookHelper()
-    fb_id,email = fbhelper.getUserFromToken(token, request.GET['fb_id'])
+    fb_id, email = fbhelper.getUserFromToken(token, request.GET['fb_id'])
 
-    # check whether this user is already in the system. If so, update the access token
+    # check whether this user is already in the system. If so, update the
+    # access token
     usernamefree = False
     try:
         user = User.objects.get(username=fb_id)
@@ -75,15 +81,16 @@ def ensure_user(request):
         profile.save()
 
         user = authenticate(username=fb_id, password=fb_id)
-        login(request,user)
+        login(request, user)
         fbhelper.import_friends(user)
 
     else:
         user = authenticate(username=fb_id, password=fb_id)
-        login(request,user)
+        login(request, user)
 
     message = "Connection success! " + user.username
-    return render_to_response('message.html',locals())
+    return render_to_response('message.html', locals())
+
 
 @login_required
 def query(request):
@@ -101,7 +108,7 @@ def query(request):
     # text = output['text'].replace("\n"," ")
 
     alchemyapi = AlchemyAPI()
-    result = alchemyapi.entities('url',URL)
+    result = alchemyapi.entities('url', URL)
     terms = [x["text"].upper() for x in result["entities"]]
 
     pages = Facebook_Interest.objects.filter()
@@ -126,7 +133,8 @@ def query(request):
             continue
         pages_matched = [page_lookup[m] for m in matches]
         for p in pages_matched:
-            results = profile.friends.filter(interests__name__iexact=p).distinct()
+            results = profile.friends.filter(
+                interests__name__iexact=p).distinct()
             for r in results:
                 fb_person = Facebook_Person.objects.get(fb_id = r.fb_id)
                 anyPeople.append((r.fb_id, fb_person.first_name))
@@ -142,7 +150,7 @@ def query(request):
         else:
             del response[i]
 
-    return render_to_response('query.html',locals())
+    return render_to_response('query.html', locals())
 
 def redirect(request):
 
@@ -158,5 +166,6 @@ def fbnetwork(request):
 
     fbhelper = FacebookHelper()
     shares = json.dumps(fbhelper.getArticleInteractions(request.user, URL))
+    #shares = shares = '{"shares": [{"to": [{"fbid": "826500443", "name": "Chris Murphy"}, {"fbid": "1092510133", "name": "Cara Hampton"}, {"fbid": "713159664", "name": "Danielle Mills"}], "from": {"fbid": "570166179", "name": "Julia Phillips"}, "interacted": [{"fbid": "826500443", "name": "Chris Murphy"}, {"fbid": "570166179", "name": "Julia Phillips"}]}]}'
 
-    return render_to_response('fbnetwork.html',locals())
+    return render_to_response('fbnetwork.html', locals())

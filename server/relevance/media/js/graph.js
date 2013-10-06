@@ -1,5 +1,10 @@
 var Graph = {
-    layout : function(data) {
+    layout : function(data, URL) {
+        if (!data) {
+            document.getElementById("#network-loader").innerHTML = "No network found.";
+            return;
+        }
+
         data = jQuery.parseJSON(data);
         var shares = data["shares"];
 
@@ -37,23 +42,23 @@ var Graph = {
             };
 
             // 'to' is not always present
-            var target_present = ('to' in shares[i]);
-            if (target_present) {
+            var targets = [];
+            for (var j = 0; j < shares[i]["to"].length; j++) {
                 var to = {
-                    label: shares[i]["to"]["name"],
-                    id: shares[i]["to"]["fbid"],
+                    label: shares[i]["to"][j]["name"],
+                    id: shares[i]["to"][j]["fbid"],
                     type: "to"
                 };
+                targets.push(to);
                 // link from 'from' to 'to'
                 links.push({
                     source: count,
-                    target: count + 1,
+                    target: count + 1 + j,
                     weight: 1
                 });
             }
 
             // handle commentors / likers
-            var offset = (target_present)? 1 : 0;
             var interacted = shares[i]["interacted"].map(function (d) {
                 return {
                     label: d.name,
@@ -65,12 +70,12 @@ var Graph = {
             for (var j = 0; j < interacted.length; j++) {
                 links.push({
                     source: count,
-                    target: count + offset + (j + 1),
+                    target: count + shares[i]["to"].length + (j + 1),
                     weight: 0.5
                 });
             }
 
-            var share_nodes = ((target_present)? [from, to] : [from]).concat(interacted);
+            var share_nodes = [from].concat(targets).concat(interacted);
 
             // add label anchors
             for (var j = 0; j < share_nodes.length; j++) {
@@ -96,7 +101,7 @@ var Graph = {
             });
         }
 
-        var force = d3.layout.force().size([w, h]).nodes(nodes).links(links).gravity(1).linkDistance(100).charge(-3000).linkStrength(function(x) {
+        var force = d3.layout.force().size([w, h]).nodes(nodes).links(links).gravity(1).linkDistance(150).charge(-3000).linkStrength(function(x) {
             return x.weight * 10
         });
 
@@ -113,34 +118,47 @@ var Graph = {
             return "http://graph.facebook.com/" + d.id + "/picture?type=square";
         }
 
+        var large = 40, medium = 30, small = 20, diff = 10, scale = 2;
         var getSize = function(d) {
-            return (d.type == "from")? 60 : (d.type == "to")? 40 : 20;
+            return (d.type == "from")? large : (d.type == "to")? medium : small;
         }
 
-        vis.append("clipPath").attr("id", "clipLarge").append("circle").attr("r", "30");
-        vis.append("clipPath").attr("id", "clipMedium").append("circle").attr("r", "20");
-        vis.append("clipPath").attr("id", "clipSmall").append("circle").attr("r", "10");
+        vis.append("clipPath").attr("id", "clipLarge").append("circle").attr("r", (scale*large-diff)/2);
+        vis.append("clipPath").attr("id", "clipMedium").append("circle").attr("r", (scale*medium-diff)/2);
+        vis.append("clipPath").attr("id", "clipSmall").append("circle").attr("r", (scale*small-diff)/2);
 
         var getClipPath = function(d) {
             return (d.type == "from")? "clipLarge" : (d.type == "to")? "clipMedium" : "clipSmall";
         }
 
+        node.on("click", function (d) {
+            url = "https://www.facebook.com/dialog/send?to="+d.id+"&app_id=339500119519143&link=" + URL + "&redirect_uri=http://www.facebook.com";
+            newwindow = window.open(url,'Share Article','height=640,width=1024');
+            if (window.focus) {newwindow.focus()}
+            return false;
+        }).on("mouseover", function (d, i) {
+            vis.selectAll(".node").transition().style("opacity", function (dd, ii) {
+                return (i == ii)? 1 : 0.20;
+            });
+        }).on("mouseout", function () {
+            vis.selectAll(".node").transition().style("opacity", 1)
+        });
         node.append("svg:circle").attr("class", function (d) { return d.type; }).attr("r", getSize);
         node.append("image").attr("xlink:href", function (d) { return profPic(d); })
-            .attr("height", getSize)
-            .attr("width", getSize)
-            .attr("x", function(d) { return -1*getSize(d)/2 })
+            .attr("height", function(d) { return scale*getSize(d); })
+            .attr("width", function(d) { return scale*getSize(d); })
+            .attr("x", function(d) { return -scale*getSize(d)/2 })
             .attr("clip-path", function(d) { return "url(#" + getClipPath(d) + ")"; })
-            .attr("y", function(d) { return -1*getSize(d)/2 });
+            .attr("y", function(d) { return -scale*getSize(d)/2 });
         node.call(force.drag);
 
         var anchorLink = vis.selectAll("line.anchorLink").data(labelAnchorLinks)
 
         var anchorNode = vis.selectAll("g.anchorNode").data(force2.nodes()).enter().append("svg:g").attr("class", "anchorNode");
         anchorNode.append("g").append("svg:circle").attr("r", 0).style("fill", "#FFF");
-            anchorNode.append("svg:text").text(function(d, i) {
+        anchorNode.append("svg:text").text(function(d, i) {
             return i % 2 == 0 ? "" : d.node.label
-        }).style("fill", "#555").style("font-family", "Arial").style("font-size", 12);
+        }).style("fill", "#555").style("font-family", "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif").style("font-size", 14);
 
         var updateLink = function() {
             this.attr("x1", function(d) {
@@ -168,7 +186,7 @@ var Graph = {
             node.call(updateNode);
 
             anchorNode.each(function(d, i) {
-                if(i % 2 == 0) {
+                if (i % 2 == 0) {
                     d.x = d.node.x;
                     d.y = d.node.y;
                 } else {
@@ -181,7 +199,7 @@ var Graph = {
 
                     var shiftX = b.width * (diffX - dist) / (dist * 2);
                     shiftX = Math.max(-b.width, Math.min(0, shiftX));
-                    var shiftY = 5;
+                    var shiftY = 30;
                     this.childNodes[1].setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
                 }
             });
