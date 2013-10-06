@@ -1,6 +1,6 @@
 {% include "header.html" %}
 
-    <center><div id="network-loader"><img src="{{ MEDIA_URL }}img/loader.gif" /></div></center>
+    <center><h4><div id="network-loader"><img src="{{ MEDIA_URL }}img/loader.gif" /></div></h4></center>
     <script type="text/javascript" charset="utf-8">Graph.layout('{% autoescape off %}{{ shares }}{% endautoescape %}', '{{ URL }}');</script>
 
 {% include "footer.html" %}

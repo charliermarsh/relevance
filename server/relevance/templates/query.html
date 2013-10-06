@@ -13,6 +13,10 @@
             <a href="javascript:shareArticle({{ person.0 }});"><img title="{{ person.1 }}" class="friend-pic" src="http://graph.facebook.com/{{ person.0 }}/picture" /></a>
         {% endfor %}
 
+    {% empty %}
+
+        <center><h4>No friends detected.</h4></center>
+
 {% endfor %}
 
 <script>

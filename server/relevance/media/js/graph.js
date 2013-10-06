@@ -3,7 +3,7 @@ var Graph = {
         data = jQuery.parseJSON(data);
 
         if (data == null) {
-            document.getElementById("network-loader").innerHTML = "No network found.";
+            document.getElementById("network-loader").innerHTML = "<h4>No network detected.</h4>";
             return;
         } else {
             document.getElementById("network-loader").style.display = "none";
