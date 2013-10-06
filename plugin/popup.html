@@ -3,6 +3,7 @@
     <link href="bootstrap.css" rel="stylesheet">
      <style type="text/css">
          body {
+            margin:0;
             margin-top:12px;
             width: 500px;
             height: 500px;
@@ -11,14 +12,23 @@
      </style>
   </head>
 <body>
-    <center>
-        <div class="btn-group btn-group-sm">
-          <button id="keywordLink" type="button" class="btn btn-info">Keyword</button>
-          <button id="networkLink" type="button" class="btn btn-info">Network</button>
-        </div>
-    </center>
-    <iframe style="height:500px; width:100%;" frameBorder="0" id="mainFrame"></iframe>
-    <iframe style="height:500px; width:100%;" frameBorder="0" id="networkFrame"></iframe>
+    <table width="100%">
+        <tr>
+            <td>
+                &nbsp; &nbsp; <img style="margin-top:8px;" src="logo.png" />
+            </td>
+            <td>
+                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                 <div style="margin-top:8px;" class="btn-group btn-group-sm">
+                    <button id="keywordLink" type="button" class="btn btn-info">Keyword</button>
+                    <button id="networkLink" type="button" class="btn btn-info">Network</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <hr />
+    <iframe style="height:470px; width:100%;" frameBorder="0" id="mainFrame"></iframe>
+    <iframe style="height:470px; width:100%;" frameBorder="0" id="networkFrame"></iframe>
     <script type="text/javascript" src="popup.js"></script>
 </body>
 </html>
