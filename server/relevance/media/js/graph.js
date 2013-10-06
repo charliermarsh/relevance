@@ -131,6 +131,12 @@ var Graph = {
             newwindow = window.open(url,'Share Article','height=640,width=1024');
             if (window.focus) {newwindow.focus()}
             return false;
+        }).on("mouseover", function (d, i) {
+            vis.selectAll(".node").transition().style("opacity", function (dd, ii) {
+                return (i == ii)? 1 : 0.20;
+            });
+        }).on("mouseout", function () {
+            vis.selectAll(".node").transition().style("opacity", 1)
         });
         node.append("svg:circle").attr("class", function (d) { return d.type; }).attr("r", getSize);
         node.append("image").attr("xlink:href", function (d) { return profPic(d); })
